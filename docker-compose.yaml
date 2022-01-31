@@ -1,0 +1,49 @@
+version: '3'
+
+services:
+
+  postgres-security:
+    image: postgres
+    container_name: security_db
+    restart: always
+    env_file:
+      - environment/security-environment.env
+
+  postgres-goods:
+    image: postgres
+    container_name: goods_db
+    restart: always
+    ports:
+      - "5432:5432"
+    env_file:
+      environment/goods-environment.env
+
+  auth-microservice:
+    image: auth-microservice
+    build:
+      context: auth-microservice/src/docker
+    container_name: auth-microservice-container
+    ports:
+      - "8080:8080"
+    depends_on:
+      - "postgres-security"
+      - "admin-microservice"
+      - "goods-microservice"
+
+  admin-microservice:
+    image: admin-microservice
+    container_name: admin
+    build:
+      context: admin-microservice/src/docker
+    depends_on:
+      - "goods-microservice"
+
+  goods-microservice:
+    image: goods-microservice
+    container_name: goods
+    build:
+      context: goods-microservice/src/docker
+    depends_on:
+      - "postgres-goods"
+
+

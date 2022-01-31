@@ -1,0 +1,30 @@
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://security_db:5432/security
+    username: postgres
+    password: pass
+
+  liquibase:
+    change-log: classpath:liquibase/changelog.yaml
+
+server:
+  port: 8080
+
+
+
+zuul:
+  routes:
+    admin:
+      url: http://admin:8070/
+      serviceId: admin-microservice
+      path: /admin/**
+      sensitive-headers:
+        - Cookie,Set-Cookie
+    goods:
+      url: http://goods:8090/
+      serviceId: goods-microservice
+      path: /goods/**
+      sensitive-headers:
+        - Cookie,Set-Cookie
+
